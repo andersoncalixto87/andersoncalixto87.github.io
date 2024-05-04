@@ -14,7 +14,7 @@
             text-align: left;
             padding: 8px;
         }
-        th {
+        .th {
             background-color: #f2f2f2;
         }
         input[type="text"], input[type="time"] {
@@ -29,15 +29,23 @@
 
 <table>
     <thead>
-        <tr>
-            <th>Date</th>
-            <th>Start Time</th>
-            <th>End Time</th>
-            <th>Description</th>
-            <th>Total Hours</th>
-        </tr>
-    </thead>
+		
     <tbody id="timesheet-body">
+		<tr>
+            <td class="th">Name</td>
+            <td><input type="text" id="name"></td>
+            <td class="th">Range Date</td>
+            <td><input type="date" id="name"></td>
+			<td><input type="date" id="name"></td>
+            
+        </tr>
+        <tr>
+            <td class="th">Date</td>
+            <td class="th">Start Time</td>
+            <td class="th">End Time</td>
+            <td class="th">Description</td>
+            <td class="th">Total Hours</td>
+        </tr>
         <tr>
             <td>Monday</td>
             <td><input type="time" id="monday-start"></td>
@@ -74,6 +82,20 @@
             <td><span id="friday-total-hours">0.00</span></td>
         </tr>
 		<tr>
+            <td>Saturday</td>
+            <td><input type="time" id="saturday-start"></td>
+            <td><input type="time" id="saturday-end"></td>
+            <td><input type="text" id="saturday-description"></td>
+            <td><span id="saturday-total-hours">0.00</span></td>
+        </tr>
+		<tr>
+            <td>Sunday</td>
+            <td><input type="time" id="sunday-start"></td>
+            <td><input type="time" id="sunday-end"></td>
+            <td><input type="text" id="sunday-description"></td>
+            <td><span id="sunday-total-hours">0.00</span></td>
+        </tr>
+		<tr>
 		<td><strong>Total Hours for the Week: </strong></td>
 		<td></td>
 		<td></td>
@@ -103,7 +125,7 @@
 
         
         function calculateWeekTotalHours() {
-            const days = ["monday", "tuesday", "wednesday", "thursday", "friday"];
+            const days = ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"];
             let totalHours = 0;
             days.forEach(day => {
                 const hours = parseFloat(document.getElementById(day + "-total-hours").innerText) || 0;
@@ -124,7 +146,7 @@
     function exportToExcel() {
     const table = document.getElementById("timesheet-body");
     const rows = table.querySelectorAll("tr");
-    let csv = "Date,Start Time,End Time,Description,Total Hours\n";
+    let csv = "";
 
     rows.forEach(row => {
         const columns = row.querySelectorAll("td");
