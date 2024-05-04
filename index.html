@@ -1,1 +1,154 @@
-# andersoncalixto87.github.io
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Week Timesheet</title>
+    <style>
+        table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+        th, td {
+            border: 1px solid #dddddd;
+            text-align: left;
+            padding: 8px;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        input[type="text"], input[type="time"] {
+            width: 100%;
+            box-sizing: border-box;
+        }
+    </style>
+</head>
+<body>
+
+<h2>Week Timesheet</h2>
+
+<table>
+    <thead>
+        <tr>
+            <th>Date</th>
+            <th>Start Time</th>
+            <th>End Time</th>
+            <th>Description</th>
+            <th>Total Hours</th>
+        </tr>
+    </thead>
+    <tbody id="timesheet-body">
+        <tr>
+            <td>Monday</td>
+            <td><input type="time" id="monday-start"></td>
+            <td><input type="time" id="monday-end"></td>
+            <td><input type="text" id="monday-description"></td>
+            <td><span id="monday-total-hours">0.00</span></td>
+        </tr>
+        <tr>
+            <td>Tuesday</td>
+            <td><input type="time" id="tuesday-start"></td>
+            <td><input type="time" id="tuesday-end"></td>
+            <td><input type="text" id="tuesday-description"></td>
+            <td><span id="tuesday-total-hours">0.00</span></td>
+        </tr>
+        <tr>
+            <td>Wednesday</td>
+            <td><input type="time" id="wednesday-start"></td>
+            <td><input type="time" id="wednesday-end"></td>
+            <td><input type="text" id="wednesday-description"></td>
+            <td><span id="wednesday-total-hours">0.00</span></td>
+        </tr>
+        <tr>
+            <td>Thursday</td>
+            <td><input type="time" id="thursday-start"></td>
+            <td><input type="time" id="thursday-end"></td>
+            <td><input type="text" id="thursday-description"></td>
+            <td><span id="thursday-total-hours">0.00</span></td>
+        </tr>
+        <tr>
+            <td>Friday</td>
+            <td><input type="time" id="friday-start"></td>
+            <td><input type="time" id="friday-end"></td>
+            <td><input type="text" id="friday-description"></td>
+            <td><span id="friday-total-hours">0.00</span></td>
+        </tr>
+		<tr>
+		<td><strong>Total Hours for the Week: </strong></td>
+		<td></td>
+		<td></td>
+		<td></td>
+		<td><span id="total-hours">0.00</span></td>
+		</tr>
+    </tbody>
+</table>
+
+<button onclick="exportToExcel()">Export to Excel</button>
+
+<script>
+
+        function calculateTotalHours(day) {
+            const start = document.getElementById(day + "-start").valueAsDate;
+            const end = document.getElementById(day + "-end").valueAsDate;
+            const diffInMs = end - start;
+            const diffInHours = diffInMs / (1000 * 60 * 60);
+            const totalHoursElement = document.getElementById(day + "-total-hours");
+            if (!isNaN(diffInHours) && diffInHours >= 0) {
+                totalHoursElement.innerText = diffInHours.toFixed(2);
+            } else {
+                totalHoursElement.innerText = "0.00";
+            }
+            calculateWeekTotalHours();
+        }
+
+        
+        function calculateWeekTotalHours() {
+            const days = ["monday", "tuesday", "wednesday", "thursday", "friday"];
+            let totalHours = 0;
+            days.forEach(day => {
+                const hours = parseFloat(document.getElementById(day + "-total-hours").innerText) || 0;
+                totalHours += hours;
+            });
+            document.getElementById("total-hours").innerText = totalHours.toFixed(2);
+        }
+
+        // Attach event listeners to input fields
+        const inputFields = document.querySelectorAll("input[type='time'], input[type='text']");
+        inputFields.forEach(input => {
+            input.addEventListener("input", function() {
+                const day = input.id.split("-")[0];
+                calculateTotalHours(day);
+            });
+        });
+
+    function exportToExcel() {
+    const table = document.getElementById("timesheet-body");
+    const rows = table.querySelectorAll("tr");
+    let csv = "Date,Start Time,End Time,Description,Total Hours\n";
+
+    rows.forEach(row => {
+        const columns = row.querySelectorAll("td");
+        const rowData = Array.from(columns).map(column => {
+            const input = column.querySelector("input");
+            return input ? input.value : column.innerText;
+        }).join(",");
+        csv += rowData + "\n";
+    });
+
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+    const link = document.createElement("a");
+    if (link.download !== undefined) {
+        const url = URL.createObjectURL(blob);
+        link.setAttribute("href", url);
+        link.setAttribute("download", "timesheet.csv");
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    } else {
+        alert("Your browser does not support downloading files directly. Please try using a different browser.");
+    }
+}
+</script>
+
+</body>
+</html>
